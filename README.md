@@ -1,4 +1,4 @@
-# OS DSII
+# Has Service Order
 
 > Web API para ordens de serviço de determinado produto
 
@@ -12,12 +12,12 @@
 ## como criar o projeto
 
 ```shell
-$ dotnet new sln -o osdsii
-$ dotnet new webapi -o OsDsII.api
-$ dotnet sln add ./OsDsII.api/OsDsII.api.csproj
-$ dotnet new xunit -o OsDsII.Tests
-$ dotnet sln add ./OsDsII.Tests/OsDsII.Tests.csproj
-$ dotnet add ./OsDsII.api/OsDsII.csproj reference ./OsDsII.Tests/OsDsII.Tests.csproj
+$ dotnet new sln -o has-service-order
+$ dotnet new webapi -o HasServiceOrder.Api
+$ dotnet sln add ./HasServiceOrder.Api/HasServiceOrder.Api.csproj
+$ dotnet new xunit -o HasServiceOrder.Tests
+$ dotnet sln add ./HasServiceOrder.Tests/HasServiceOrder.Tests.csproj
+$ dotnet add ./HasServiceOrder.Api/OsDsII.Api.csproj reference ./HasServiceOrder.Tests/HasServiceOrder.Tests.csproj
 ```
 
 ## TODO
