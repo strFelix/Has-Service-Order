@@ -6,7 +6,7 @@
 
 ## Tecnologias utilizadas
 
-- ASP .NET 7.0
+- ASP .NET 8.0
 - SQL Server
 
 ## como criar o projeto
