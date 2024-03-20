@@ -7,9 +7,7 @@ builder.Logging.AddConsole();
 
 builder.Services.AddDbContext<DataContext>(options =>
 {
-    var connectionString = builder.Configuration.GetConnectionString("DefaultMySQLConnection");
-    var serverVersion = new MySqlServerVersion(new Version(8, 0, 33));
-    options.UseMySql(connectionString, serverVersion);
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DatabaseConnection"));
 });
 // Add services to the container.
 
