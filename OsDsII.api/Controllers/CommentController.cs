@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using OsDsII.api.Data;
@@ -18,17 +19,28 @@ namespace OsDsII.api.Controllers
         }
 
         [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetCommentsAsync(int serviceOrderId)
         {
-            ServiceOrder serviceOrderWithComments = await _context.ServiceOrders
+            try
+            {
+                ServiceOrder serviceOrderWithComments = await _context.ServiceOrders
                 .Include(c => c.Customer)
                 .Include(c => c.Comments)
                 .FirstOrDefaultAsync(s => s.Id == serviceOrderId);
-            return Ok(serviceOrderWithComments);
-
+                return Ok(serviceOrderWithComments);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
         }
 
         [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> AddComment(int serviceOrderId, Comment comment)
         {
             try
@@ -37,7 +49,7 @@ namespace OsDsII.api.Controllers
 
                 if (os == null)
                 {
-                    throw new Exception("ServiceOrder not found.");
+                    return NotFound("ServiceOrder not found.");
                 }
 
                 Comment commentExists = HandleCommentObject(serviceOrderId, comment.Description);
@@ -49,7 +61,7 @@ namespace OsDsII.api.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
 
