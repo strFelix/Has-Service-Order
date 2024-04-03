@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using OsDsII.api.Data;
+using OsDsII.api.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Logging.ClearProviders();
@@ -13,6 +14,7 @@ builder.Services.AddDbContext<DataContext>(options =>
 
 builder.Services.AddCors();
 
+builder.Services.AddScoped<IServiceOrderRepository, ServiceOrderRepository>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
