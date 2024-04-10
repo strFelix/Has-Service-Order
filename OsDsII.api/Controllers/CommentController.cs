@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using OsDsII.api.Data;
 using OsDsII.api.Models;
+using OsDsII.api.Repository.Comments;
+using OsDsII.api.Repository.ServiceOrders;
 
 namespace OsDsII.api.Controllers
 {
@@ -11,11 +13,13 @@ namespace OsDsII.api.Controllers
     [Route("ServiceOrders/{id}/comment")]
     public class CommentController : ControllerBase
     {
-        private readonly DataContext _context;
+        private readonly  IServiceOrderRepository _serviceOrderRepository;
+        private readonly ICommentRepository _commentRepository;
 
-        public CommentController(DataContext context)
+        public CommentController(IServiceOrderRepository serviceOrderRepository, ICommentRepository commentRepository)
         {
-            _context = context;
+            _serviceOrderRepository = serviceOrderRepository;
+            _commentRepository = commentRepository;
         }
 
         [HttpGet]
@@ -24,11 +28,8 @@ namespace OsDsII.api.Controllers
         public async Task<IActionResult> GetCommentsAsync(int serviceOrderId)
         {
             try
-            {
-                ServiceOrder serviceOrderWithComments = await _context.ServiceOrders
-                .Include(c => c.Customer)
-                .Include(c => c.Comments)
-                .FirstOrDefaultAsync(s => s.Id == serviceOrderId);
+            {   //GetCommentByServiceOrderIdAsync
+                ServiceOrder serviceOrderWithComments = await _serviceOrderRepository.GetCommentByServiceOrderIdAsync(serviceOrderId);
                 return Ok(serviceOrderWithComments);
             }
             catch (Exception ex)
@@ -45,7 +46,8 @@ namespace OsDsII.api.Controllers
         {
             try
             {
-                var os = await _context.ServiceOrders.Include(c => c.Customer).FirstOrDefaultAsync(s => serviceOrderId == s.Id);
+                //
+                var os = await _serviceOrderRepository.GetServiceOrderCustomerAsync(serviceOrderId);
 
                 if (os == null)
                 {
@@ -54,8 +56,7 @@ namespace OsDsII.api.Controllers
 
                 Comment commentExists = HandleCommentObject(serviceOrderId, comment.Description);
 
-                await _context.Comments.AddAsync(commentExists); // This line adds the comment to the context
-                await _context.SaveChangesAsync();
+                _commentRepository.AddCommentAsync(commentExists);
 
                 return Ok(commentExists);
             }

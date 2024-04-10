@@ -3,7 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using OsDsII.api.Data;
 using OsDsII.api.Models;
-using OsDsII.api.Repository;
+using OsDsII.api.Repository.Customers;
+using OsDsII.api.Repository.ServiceOrders;
 
 namespace OsDsII.api.Controllers
 {
@@ -13,9 +14,11 @@ namespace OsDsII.api.Controllers
     {
         //IOC Inverção de controle -> Firma o contrato da interface com o repository
         private readonly IServiceOrderRepository _serviceOrderRepository;
-        public ServiceOrdersController(IServiceOrderRepository serviceOrderRepository)
+        private readonly ICustomerRepository _customerRepository;
+        public ServiceOrdersController(IServiceOrderRepository serviceOrderRepository, ICustomerRepository customerRepository)
         {
             _serviceOrderRepository = serviceOrderRepository;
+            _customerRepository = customerRepository;   
         }
 
 
@@ -68,8 +71,8 @@ namespace OsDsII.api.Controllers
                 {
                     return NotFound("Service order cannot be null");
                 }
-
-                Customer customer = await _dataContext.Customers.FirstOrDefaultAsync(c => serviceOrder.Customer.Id == c.Id);
+                //GetCustomerByServiceOrderAsync
+                Customer customer = await _customerRepository.GetCustomerByServiceOrderAsync(serviceOrder);
 
                 if (customer is null)
                 {

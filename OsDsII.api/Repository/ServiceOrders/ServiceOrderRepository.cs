@@ -4,7 +4,7 @@ using OsDsII.api.Data;
 using OsDsII.api.Models;
 
 // interface segregation principal (SOL ->I D)
-namespace OsDsII.api.Repository
+namespace OsDsII.api.Repository.ServiceOrders
 {
     public sealed class ServiceOrderRepository : IServiceOrderRepository
     {
@@ -12,11 +12,11 @@ namespace OsDsII.api.Repository
         // di data context
 
         private readonly DataContext _dataContext;
-        public ServiceOrderRepository(DataContext dataContext) 
-        { 
+        public ServiceOrderRepository(DataContext dataContext)
+        {
             _dataContext = dataContext;
         }
-    
+
         public async Task<List<ServiceOrder>> GetAllAsync()
         {
             return await _dataContext.ServiceOrders.ToListAsync();
@@ -43,6 +43,21 @@ namespace OsDsII.api.Repository
         {
             _dataContext.ServiceOrders.Update(serviceOrder);
             await _dataContext.SaveChangesAsync();
+        }
+
+        public async Task<ServiceOrder> GetCommentByServiceOrderIdAsync(int serviceOrderId)
+        {
+            ServiceOrder serviceOrderWithComments = await _dataContext.ServiceOrders
+                .Include(c => c.Customer)
+                .Include(c => c.Comments)
+                .FirstOrDefaultAsync(s => s.Id == serviceOrderId);
+            return (serviceOrderWithComments);
+        }
+
+        public async Task<ServiceOrder> GetServiceOrderCustomerAsync(int serviceOrderId)
+        {
+            ServiceOrder os = await _dataContext.ServiceOrders.Include(c => c.Customer).FirstOrDefaultAsync(s => serviceOrderId == s.Id);
+            return (os);
         }
     }
 }
