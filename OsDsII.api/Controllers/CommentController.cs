@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using OsDsII.api.Data;
 using OsDsII.api.Models;
+using OsDsII.api.Repository.CommentsRepository;
+using OsDsII.api.Repository.ServiceOrderRepository;
 
 namespace OsDsII.api.Controllers
 {
@@ -10,20 +12,21 @@ namespace OsDsII.api.Controllers
     [Route("ServiceOrders/{id}/comment")]
     public class CommentController : ControllerBase
     {
-        private readonly DataContext _context;
+        //private readonly DataContext _context;
+        private readonly IServiceOrderRepository _serviceOrderRepository; // IOC (INVERSION OF CONTROL)
+        private readonly ICommentsRepository _commentsRepository;
 
-        public CommentController(DataContext context)
+
+        public CommentController(IServiceOrderRepository serviceOrderRepository, ICommentsRepository commentsRepository)
         {
-            _context = context;
+            _serviceOrderRepository = serviceOrderRepository;
+            _commentsRepository = commentsRepository;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetCommentsAsync(int serviceOrderId)
         {
-            ServiceOrder serviceOrderWithComments = await _context.ServiceOrders
-                .Include(c => c.Customer)
-                .Include(c => c.Comments)
-                .FirstOrDefaultAsync(s => s.Id == serviceOrderId);
+            ServiceOrder serviceOrderWithComments = await _serviceOrderRepository.GetServiceOrderWithComments(serviceOrderId);
             return Ok(serviceOrderWithComments);
 
         }
@@ -33,17 +36,16 @@ namespace OsDsII.api.Controllers
         {
             try
             {
-                var os = await _context.ServiceOrders.Include(c => c.Customer).FirstOrDefaultAsync(s => serviceOrderId == s.Id);
+                ServiceOrder os = await _serviceOrderRepository.GetServiceOrderFromUser(serviceOrderId);
 
                 if (os == null)
                 {
-                    throw new Exception("ServiceOrder not found.");
+                    throw new Exception("Service Order not found.");
                 }
 
                 Comment commentExists = HandleCommentObject(serviceOrderId, comment.Description);
 
-                await _context.Comments.AddAsync(commentExists); // This line adds the comment to the context
-                await _context.SaveChangesAsync();
+                await _commentsRepository.AddCommentAsync(commentExists); // This line adds the comment to the context
 
                 return Ok(commentExists);
             }
@@ -55,12 +57,11 @@ namespace OsDsII.api.Controllers
 
         private Comment HandleCommentObject(int id, string description)
         {
-            Comment comment = new Comment
+            return new Comment
             {
                 Description = description,
                 ServiceOrderId = id
             };
-            return comment;
         }
     }
 }

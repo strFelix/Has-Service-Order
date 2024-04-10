@@ -42,5 +42,20 @@ namespace OsDsII.api.Repository.ServiceOrderRepository
             await _dataContext.SaveChangesAsync();
         }
 
+        public async Task<ServiceOrder> GetServiceOrderWithComments(int serviceOrderId)
+        {
+            return await _dataContext.ServiceOrders
+                .Include(c => c.Customer)
+                .Include(c => c.Comments)
+                .FirstOrDefaultAsync(s => s.Id == serviceOrderId);
+        }
+
+        public async Task<ServiceOrder> GetServiceOrderFromUser(int serviceOrderId)
+        {
+            return await _dataContext.ServiceOrders
+                 .Include(c => c.Customer)
+                 .FirstOrDefaultAsync(s => serviceOrderId == s.Id);
+        }
+
     }
 }
