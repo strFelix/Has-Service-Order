@@ -2,14 +2,14 @@
 using OsDsII.api.Data;
 using OsDsII.api.Models;
 
-namespace OsDsII.api.Repository
+namespace OsDsII.api.Repository.ServiceOrderRepository
 {
     public sealed class ServiceOrderRepository : IServiceOrderRepository
     {
         // DI DATA CONTEXT
         private readonly DataContext _dataContext;
 
-        public ServiceOrderRepository(DataContext dataContext) 
+        public ServiceOrderRepository(DataContext dataContext)
         {
             _dataContext = dataContext;
         }

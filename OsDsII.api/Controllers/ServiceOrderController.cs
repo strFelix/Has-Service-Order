@@ -1,18 +1,24 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using OsDsII.api.Models;
-using OsDsII.api.Repository;
+using OsDsII.api.Repository.CustomersRepository;
+using OsDsII.api.Repository.ServiceOrderRepository;
 
 namespace OsDsII.api.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class ServiceOrdersController : ControllerBase
+    public sealed class ServiceOrdersController : ControllerBase
     {
         private readonly IServiceOrderRepository _serviceOrderRepository; // IOC (INVERSION OF CONTROL)
-        public ServiceOrdersController(IServiceOrderRepository serviceOrderRepository)
+        private readonly ICustomersRepository _customersRepository;
+        public ServiceOrdersController(
+            IServiceOrderRepository serviceOrderRepository,
+            ICustomersRepository customersRepository
+            )
         {
             _serviceOrderRepository = serviceOrderRepository;
+            _customersRepository = customersRepository;
         }
 
         [HttpGet]
@@ -57,7 +63,7 @@ namespace OsDsII.api.Controllers
                     throw new Exception("Service order cannot be null");
                 }
 
-                Customer customer = await _dataContext.Customers.FirstOrDefaultAsync(c => serviceOrder.Customer.Id == c.Id);
+                Customer customer = await _customersRepository.GetByIdAsync(serviceOrder.Customer.Id);
 
                 if (customer is null)
                 {

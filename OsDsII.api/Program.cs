@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using OsDsII.api.Data;
-using OsDsII.api.Repository;
+using OsDsII.api.Repository.ServiceOrderRepository;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Logging.ClearProviders();
