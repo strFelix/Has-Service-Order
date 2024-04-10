@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using OsDsII.api.Data;
+using OsDsII.api.Repository.CommentsRepository;
+using OsDsII.api.Repository.CustomersRepository;
 using OsDsII.api.Repository.ServiceOrderRepository;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,6 +17,8 @@ builder.Services.AddDbContext<DataContext>(options =>
 builder.Services.AddCors();
 
 builder.Services.AddScoped<IServiceOrderRepository, ServiceOrderRepository>();
+builder.Services.AddScoped<ICustomersRepository, CustomersRepository>();
+builder.Services.AddScoped<ICommentsRepository, CommentsRepository>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

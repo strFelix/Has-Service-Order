@@ -1,4 +1,5 @@
-﻿using OsDsII.api.Models;
+﻿using OsDsII.api.Dtos;
+using OsDsII.api.Models;
 
 namespace OsDsII.api.Repository.CustomersRepository
 {

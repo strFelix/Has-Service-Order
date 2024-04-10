@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using OsDsII.api.Data;
+using OsDsII.api.Dtos;
 using OsDsII.api.Models;
 using OsDsII.api.Repository.CustomersRepository;
 
@@ -60,7 +61,7 @@ namespace OsDsII.api.Controllers
         [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(Customer))]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> CreateCustomerAsync(Customer customer)
+        public async Task<IActionResult> CreateCustomerAsync(CreateCustomerDto customer)
         {
             try
             {
@@ -69,13 +70,13 @@ namespace OsDsII.api.Controllers
                 {
                     return Conflict("Customer already exists");
                 }
-                await _customersRepository.AddCustomerAsync(customer);
+                await _customersRepository.AddCustomerAsync(customerExists);
 
                 return Created(nameof(CustomersController), customer);
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, ex);
             }
         }
 
