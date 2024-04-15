@@ -10,8 +10,9 @@ namespace OsDsII.api.Models
         public DateTimeOffset OpeningDate { get; set; } = DateTimeOffset.Now;
         public DateTimeOffset FinishDate { get; set; }
 
-        public Customer? Customer { get; set; }
-        public List<Comment> Comments { get; } = new();
+        public int CustomerId { get; set; }
+        public Customer Customer { get; set; }
+        public List<Comment> Comments { get; set; }
 
         public bool CanFinish()
         {
