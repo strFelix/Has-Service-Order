@@ -1,3 +1,4 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using OsDsII.api.Data;
@@ -13,10 +14,12 @@ namespace OsDsII.api.Controllers
     {
         //private readonly DataContext _dataContext;
         private readonly ICustomersRepository _customersRepository;
+        private readonly IMapper _mapper;
 
-        public CustomersController(ICustomersRepository customersRepository)
+        public CustomersController(ICustomersRepository customersRepository, IMapper mapper)
         {
             _customersRepository = customersRepository;
+            _mapper = mapper;
         }
 
         [HttpGet]
@@ -70,13 +73,14 @@ namespace OsDsII.api.Controllers
                 {
                     return Conflict("Customer already exists");
                 }
-                await _customersRepository.AddCustomerAsync(customerExists);
+                var cs = _mapper.Map<Customer>(customer);
+                await _customersRepository.AddCustomerAsync(cs);
 
                 return Created(nameof(CustomersController), customer);
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex);
+                return StatusCode((int)StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
 

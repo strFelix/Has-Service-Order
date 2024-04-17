@@ -13,7 +13,7 @@ namespace OsDsII.api.Models
 
         public string Phone { get; set; }
 
-        public List<ServiceOrder> ServiceOrders { get; set; }
+        public List<ServiceOrder>? ServiceOrders { get; set; } = null;
 
         public Customer()
         { }

@@ -114,7 +114,7 @@ namespace OsDsII.api.Controllers
                 }
 
                 serviceOrder.Cancel();
-                _serviceOrderRepository.CancelAsync(serviceOrder);
+                await _serviceOrderRepository.CancelAsync(serviceOrder);
 
                 return NoContent();
             }
