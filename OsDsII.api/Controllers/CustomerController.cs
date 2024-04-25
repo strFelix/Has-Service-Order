@@ -3,8 +3,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using OsDsII.api.Data;
 using OsDsII.api.Dtos;
+using OsDsII.api.Exceptions;
 using OsDsII.api.Models;
 using OsDsII.api.Repository.CustomersRepository;
+using OsDsII.api.Services.Customers;
 
 namespace OsDsII.api.Controllers
 {
@@ -15,11 +17,13 @@ namespace OsDsII.api.Controllers
         //private readonly DataContext _dataContext;
         private readonly ICustomersRepository _customersRepository;
         private readonly IMapper _mapper;
+        private readonly ICustomersService _customersService;
 
-        public CustomersController(ICustomersRepository customersRepository, IMapper mapper)
+        public CustomersController(ICustomersRepository customersRepository, IMapper mapper, ICustomersService customersService)
         {
             _customersRepository = customersRepository;
             _mapper = mapper;
+            _customersService = customersService;
         }
 
         [HttpGet]
@@ -68,19 +72,13 @@ namespace OsDsII.api.Controllers
         {
             try
             {
-                Customer customerExists = await _customersRepository.FindUserByEmailAsync(customer.Email);
-                if (customerExists != null && !customerExists.Equals(customer))
-                {
-                    return Conflict("Customer already exists");
-                }
-                var cs = _mapper.Map<Customer>(customer);
-                await _customersRepository.AddCustomerAsync(cs);
+                await _customersService.CreateAsync(customer); // assíncrono porém void
 
                 return Created(nameof(CustomersController), customer);
             }
-            catch (Exception ex)
+            catch (BaseException ex)
             {
-                return StatusCode((int)StatusCodes.Status500InternalServerError, ex.Message);
+                return ex.GetResponse();
             }
         }
 
