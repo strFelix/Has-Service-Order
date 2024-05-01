@@ -33,7 +33,7 @@ namespace OsDsII.api.Controllers
         {
             try
             {
-                IEnumerable<Customer> customers = await _customersRepository.GetAllAsync();
+                IEnumerable<CustomerDto> customers = await _customersService.GetAllAsync();
                 return Ok(customers);
             }
             catch (Exception ex)
@@ -108,16 +108,11 @@ namespace OsDsII.api.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> UpdateCustomerAsync(Customer customer)
+        public async Task<IActionResult> UpdateCustomerAsync(int id)
         {
             try
             {
-                Customer currentCustomer = await _customersRepository.GetByIdAsync(customer.Id);
-                if (customer is null)
-                {
-                    return NotFound("Customer not found");
-                }
-                await _customersRepository.UpdateCustomerAsync(customer);
+                await _customersService.UpdateAsync(id); // assíncrono porém void
                 return NoContent();
             }
             catch (Exception ex)
