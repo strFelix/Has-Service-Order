@@ -1,7 +1,5 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using OsDsII.api.Data;
 using OsDsII.api.Dtos;
 using OsDsII.api.Exceptions;
 using OsDsII.api.Models;
@@ -36,9 +34,9 @@ namespace OsDsII.api.Controllers
                 IEnumerable<CustomerDto> customers = await _customersService.GetAllAsync();
                 return Ok(customers);
             }
-            catch (Exception ex)
+            catch (BaseException  ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+                return ex.GetResponse();
             }
 
         }
@@ -51,14 +49,10 @@ namespace OsDsII.api.Controllers
         {
             try
             {
-                Customer customer = await _customersRepository.GetByIdAsync(id);
-                if (customer is null)
-                {
-                    return NotFound("Customer not found");
-                }
+                CustomerDto customer = await _customersService.GetCustomerAsync(id);
                 return Ok(customer);
             }
-            catch (Exception ex)
+            catch (BaseException  ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
@@ -73,10 +67,9 @@ namespace OsDsII.api.Controllers
             try
             {
                 await _customersService.CreateAsync(customer); // assíncrono porém void
-
                 return Created(nameof(CustomersController), customer);
             }
-            catch (BaseException ex)
+            catch (BaseException  ex)
             {
                 return ex.GetResponse();
             }
@@ -90,17 +83,12 @@ namespace OsDsII.api.Controllers
         {
             try
             {
-                Customer customer = await _customersRepository.GetByIdAsync(id);
-                if (customer is null)
-                {
-                    return NotFound("Customer not found");
-                }
-                await _customersRepository.DeleteCustomer(customer);
+                await _customersService.DeleteAsync(id);
                 return NoContent();
             }
-            catch (Exception ex)
+            catch (BaseException  ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+                return ex.GetResponse();
             }
         }
 
@@ -115,9 +103,9 @@ namespace OsDsII.api.Controllers
                 await _customersService.UpdateAsync(id); // assíncrono porém void
                 return NoContent();
             }
-            catch (Exception ex)
+            catch (BaseException  ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+                return ex.GetResponse();
             }
         }
     }
