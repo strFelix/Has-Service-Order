@@ -48,14 +48,18 @@ namespace OsDsII.api.Services.Customers
             await _customersRepository.AddCustomerAsync(customer);
         }
 
-        public async Task UpdateAsync(int id)
+        public async Task UpdateAsync(int id, CreateCustomerDto customer)
         {
-            Customer currentCustomer = await _customersRepository.GetByIdAsync(id);
-            if (currentCustomer is null)
+            Customer customerExists = await _customersRepository.GetByIdAsync(id);
+            if (customerExists is null)
             {
-                throw new NotFoundException("Customer not found");
+                throw new NotFoundException("Usuário não encontrado");
             }
-            await _customersRepository.UpdateCustomerAsync(currentCustomer);
+            customerExists.Email = customer.Email;
+            customerExists.Name = customer.Name;
+            customerExists.Phone = customer.Phone;
+
+            await _customersRepository.UpdateCustomerAsync(customerExists);
         }
 
         public async Task DeleteAsync(int id)

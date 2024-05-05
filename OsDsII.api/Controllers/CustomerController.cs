@@ -96,14 +96,14 @@ namespace OsDsII.api.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> UpdateCustomerAsync(int id)
+        public async Task<IActionResult> UpdateCustomerAsync([FromBody] CreateCustomerDto customer, int id)
         {
             try
             {
-                await _customersService.UpdateAsync(id); // assíncrono porém void
+                await _customersService.UpdateAsync(id, customer);
                 return NoContent();
             }
-            catch (BaseException  ex)
+            catch (BaseException ex)
             {
                 return ex.GetResponse();
             }
