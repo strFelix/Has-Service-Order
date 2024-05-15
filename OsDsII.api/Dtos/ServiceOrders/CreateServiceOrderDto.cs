@@ -1,4 +1,4 @@
-﻿namespace OsDsII.api.Dtos
+﻿namespace OsDsII.api.Dtos.ServiceOrders
 {
     public record CreateServiceOrderDto(
         string Description,

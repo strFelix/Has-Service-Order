@@ -1,4 +1,4 @@
-﻿using OsDsII.api.Dtos;
+﻿using OsDsII.api.Dtos.ServiceOrders;
 
 namespace OsDsII.api.Services.ServiceOrders
 {

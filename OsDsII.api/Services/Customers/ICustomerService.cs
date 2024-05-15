@@ -1,4 +1,4 @@
-﻿using OsDsII.api.Dtos;
+﻿using OsDsII.api.Dtos.Customers;
 
 namespace OsDsII.api.Services.Customers
 {
