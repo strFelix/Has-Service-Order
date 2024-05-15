@@ -25,6 +25,8 @@ namespace OsDsII.api.Controllers
         }
 
         [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetAllServiceOrderAsync()
         {
             try
@@ -32,13 +34,16 @@ namespace OsDsII.api.Controllers
                 List<ServiceOrderDto> serviceOrders = await _serviceOrderService.GetAllAsync();
                 return Ok(serviceOrders);
             }
-            catch (Exception ex)
+            catch (BaseException ex)
             {
-                return BadRequest(ex.Message);
+                return ex.GetResponse();
             }
         }
 
         [HttpGet("{id}")]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetServiceOrderById(int id)
         {
             try
@@ -46,28 +51,32 @@ namespace OsDsII.api.Controllers
                 ServiceOrderDto serviceOrder = await _serviceOrderService.GetServiceOrderAsync(id);
                 return Ok(serviceOrder);
             }
-            catch (Exception ex)
+            catch (BaseException ex)
             {
-                return BadRequest(ex.Message);
+                return ex.GetResponse();
             }
         }
 
         [HttpPost]
+        [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(NewServiceOrderDto))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> CreateServiceOrderAsync(CreateServiceOrderDto serviceOrderDto)
         {
             try
             {
-                NewServiceOrderDto serviceOrder = await _serviceOrderService.CreateServiceOrderAsync(serviceOrderDto);
-                return Created("CreateServiceOrderAsync", serviceOrder);
+                await _serviceOrderService.CreateServiceOrderAsync(serviceOrderDto);
+                return Created("CreateServiceOrderAsync", serviceOrderDto);
             }
-            catch (Exception ex)
+            catch (BaseException ex)
             {
-                return BadRequest(ex.Message);
+                return ex.GetResponse();
             }
-
         }
 
         [HttpPut("{id}/status/finish")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)] 
         public async Task<IActionResult> FinishServiceOrderAsync(int id)
         {
             try
@@ -75,13 +84,16 @@ namespace OsDsII.api.Controllers
                 await _serviceOrderService.FinishServiceOrderAsync(id);
                 return NoContent();
             }
-            catch (Exception ex)
+            catch (BaseException ex)
             {
-                return BadRequest(ex.Message);
+                return ex.GetResponse();
             }
         }
 
         [HttpPut("{id}/status/cancel")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)] 
         public async Task<IActionResult> CancelServiceOrder(int id)
         {
             try
@@ -89,9 +101,9 @@ namespace OsDsII.api.Controllers
                await _serviceOrderService.CancelServiceOrderAsync(id);
                return NoContent();
             }
-            catch (Exception ex)
+            catch (BaseException ex)
             {
-                return BadRequest(ex.Message);
+                return ex.GetResponse();
             }
         }
     }

@@ -42,7 +42,7 @@ namespace OsDsII.api.Services.ServiceOrders
         {
             if (createServiceOrderDto is null)
             {
-                throw new Exception("Service order cannot be null");
+                throw new BadRequest("Service order cannot be null");
             }
 
             Customer customer = await _customersRepository.GetByIdAsync(createServiceOrderDto.CustomerId);
