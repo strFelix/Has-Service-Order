@@ -1,8 +1,13 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using OsDsII.api.Dtos;
+using OsDsII.api.Exceptions;
 using OsDsII.api.Models;
 using OsDsII.api.Repository.CustomersRepository;
 using OsDsII.api.Repository.ServiceOrderRepository;
+using OsDsII.api.Services.Customers;
+using OsDsII.api.Services.ServiceOrders;
 
 namespace OsDsII.api.Controllers
 {
@@ -10,15 +15,15 @@ namespace OsDsII.api.Controllers
     [Route("[controller]")]
     public sealed class ServiceOrdersController : ControllerBase
     {
-        private readonly IServiceOrderRepository _serviceOrderRepository; // IOC (INVERSION OF CONTROL)
-        private readonly ICustomersRepository _customersRepository;
-        public ServiceOrdersController(
-            IServiceOrderRepository serviceOrderRepository,
-            ICustomersRepository customersRepository
-            )
+        private readonly IServiceOrderService _serviceOrderService;
+        private readonly ICustomersService _customersService;
+        private readonly IMapper _mapper;
+
+        public ServiceOrdersController(ICustomersService customersService, IServiceOrderService serviceOrderService,IMapper mapper)
         {
-            _serviceOrderRepository = serviceOrderRepository;
-            _customersRepository = customersRepository;
+            _serviceOrderService = serviceOrderService;
+            _customersService = customersService;
+            _mapper = mapper;
         }
 
         [HttpGet]
@@ -26,7 +31,7 @@ namespace OsDsII.api.Controllers
         {
             try
             {
-                List<ServiceOrder> serviceOrders = await _serviceOrderRepository.GetAllAsync();
+                List<ServiceOrderDto> serviceOrders = await _serviceOrderService.GetAllAsync();
                 return Ok(serviceOrders);
             }
             catch (Exception ex)
@@ -40,11 +45,7 @@ namespace OsDsII.api.Controllers
         {
             try
             {
-                ServiceOrder serviceOrder = await _serviceOrderRepository.GetByIdAsync(id);
-                if (serviceOrder is null)
-                {
-                    throw new Exception("Service order not found");
-                }
+                ServiceOrderDto serviceOrder = await _serviceOrderService.GetServiceOrderAsync(id);
                 return Ok(serviceOrder);
             }
             catch (Exception ex)
@@ -54,23 +55,16 @@ namespace OsDsII.api.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateServiceOrderAsync(ServiceOrder serviceOrder)
+        public async Task<IActionResult> CreateServiceOrderAsync(CreateServiceOrderDto serviceOrderDto)
         {
             try
             {
-                if (serviceOrder is null)
-                {
-                    throw new Exception("Service order cannot be null");
-                }
+                //new service (service order puro)
+                ServiceOrder serviceOrder = _serviceOrderService.CreateServiceOrderAsync(serviceOrderDto);
 
-                Customer customer = await _customersRepository.GetByIdAsync(serviceOrder.Customer.Id);
+                CustomerDto customer = await _customersService.GetCustomerAsync(serviceOrderDto.CustomerId);
 
-                if (customer is null)
-                {
-                    throw new Exception("Customer not found");
-                }
-
-                await _serviceOrderRepository.AddAsync(serviceOrder);
+                
                 return Created("CreateServiceOrderAsync", serviceOrder);
             }
             catch (Exception ex)
