@@ -1,5 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using OsDsII.api.Data;
+﻿using OsDsII.api.Data;
 using OsDsII.api.Models;
 
 namespace OsDsII.api.Repository.CommentsRepository

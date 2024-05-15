@@ -13,7 +13,7 @@ namespace OsDsII.api.Services.ServiceOrders
         private readonly ICustomersRepository _customersRepository;
         private readonly IMapper _mapper;
 
-        public ServiceOrderService(IServiceOrderRepository serviceOrderRepository,ICustomersRepository customersRepository,IMapper mapper)
+        public ServiceOrderService(IServiceOrderRepository serviceOrderRepository, ICustomersRepository customersRepository, IMapper mapper)
         {
             _serviceOrderRepository = serviceOrderRepository;
             _customersRepository = customersRepository;
@@ -48,7 +48,7 @@ namespace OsDsII.api.Services.ServiceOrders
             Customer customer = await _customersRepository.GetByIdAsync(createServiceOrderDto.CustomerId);
 
             if (customer is null)
-            {   
+            {
                 throw new BadRequest("Service order cannot be linked to an unknown customer");
             }
 

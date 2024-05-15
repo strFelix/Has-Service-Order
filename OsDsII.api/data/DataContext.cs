@@ -58,7 +58,7 @@ namespace OsDsII.api.Data
             modelBuilder.Entity<ServiceOrder>()
                 .Property(s => s.Price)
                 .IsRequired(); //required significa NOT NULL por debaixo dos panos
-            
+
             modelBuilder.Entity<ServiceOrder>()
                 .Property(s => s.Status)
                 .HasConversion(
@@ -92,7 +92,7 @@ namespace OsDsII.api.Data
                 .IsRequired();
 
             modelBuilder.Entity<Comment>()
-                .Property (c => c.SendDate)
+                .Property(c => c.SendDate)
                 .HasDefaultValue(DateTimeOffset.Now);
 
             // chave estrangeira 1/N

@@ -1,12 +1,7 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using OsDsII.api.Dtos.ServiceOrders;
 using OsDsII.api.Exceptions;
-using OsDsII.api.Models;
-using OsDsII.api.Repository.CustomersRepository;
-using OsDsII.api.Repository.ServiceOrderRepository;
-using OsDsII.api.Services.Customers;
 using OsDsII.api.Services.ServiceOrders;
 
 namespace OsDsII.api.Controllers
@@ -18,7 +13,7 @@ namespace OsDsII.api.Controllers
         private readonly IServiceOrderService _serviceOrderService;
         private readonly IMapper _mapper;
 
-        public ServiceOrdersController(IServiceOrderService serviceOrderService,IMapper mapper)
+        public ServiceOrdersController(IServiceOrderService serviceOrderService, IMapper mapper)
         {
             _serviceOrderService = serviceOrderService;
             _mapper = mapper;
@@ -101,8 +96,8 @@ namespace OsDsII.api.Controllers
         {
             try
             {
-               await _serviceOrderService.CancelServiceOrderAsync(id);
-               return NoContent();
+                await _serviceOrderService.CancelServiceOrderAsync(id);
+                return NoContent();
             }
             catch (BaseException ex)
             {

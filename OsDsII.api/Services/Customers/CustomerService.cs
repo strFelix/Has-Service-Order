@@ -70,7 +70,7 @@ namespace OsDsII.api.Services.Customers
                 throw new NotFoundException("Customer not found");
             }
             await _customersRepository.DeleteCustomer(currentCustomer);
-        }       
+        }
 
     }
 }

@@ -1,6 +1,4 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using OsDsII.api.Data;
 using OsDsII.api.Models;
 using OsDsII.api.Repository.CommentsRepository;
 using OsDsII.api.Repository.ServiceOrderRepository;

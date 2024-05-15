@@ -34,7 +34,7 @@ namespace OsDsII.api.Controllers
                 IEnumerable<CustomerDto> customers = await _customersService.GetAllAsync();
                 return Ok(customers);
             }
-            catch (BaseException  ex)
+            catch (BaseException ex)
             {
                 return ex.GetResponse();
             }
@@ -52,7 +52,7 @@ namespace OsDsII.api.Controllers
                 CustomerDto customer = await _customersService.GetCustomerAsync(id);
                 return Ok(customer);
             }
-            catch (BaseException  ex)
+            catch (BaseException ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
@@ -69,7 +69,7 @@ namespace OsDsII.api.Controllers
                 await _customersService.CreateAsync(customer); // assíncrono porém void
                 return Created(nameof(CustomersController), customer);
             }
-            catch (BaseException  ex)
+            catch (BaseException ex)
             {
                 return ex.GetResponse();
             }
@@ -86,7 +86,7 @@ namespace OsDsII.api.Controllers
                 await _customersService.DeleteAsync(id);
                 return NoContent();
             }
-            catch (BaseException  ex)
+            catch (BaseException ex)
             {
                 return ex.GetResponse();
             }
