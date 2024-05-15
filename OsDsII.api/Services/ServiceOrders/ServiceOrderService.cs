@@ -38,9 +38,8 @@ namespace OsDsII.api.Services.ServiceOrders
             return serviceOrderDto;
         }
 
-        public async Task CreateAsync(CreateServiceOrderDto createServiceOrderDto)
+        public async Task<NewServiceOrderDto> CreateServiceOrderAsync(CreateServiceOrderDto createServiceOrderDto)
         {
-            //NewServiceOrderDto
             if (createServiceOrderDto is null)
             {
                 throw new Exception("Service order cannot be null");
@@ -55,8 +54,34 @@ namespace OsDsII.api.Services.ServiceOrders
 
             ServiceOrder serviceOrder = _mapper.Map<ServiceOrder>(createServiceOrderDto);
             await _serviceOrderRepository.AddAsync(serviceOrder);
-            
-            //return _mapper.Map<NewServiceOrderDto>(serviceOrder) 
+
+            return _mapper.Map<NewServiceOrderDto>(serviceOrder);
+        }
+
+        public async Task FinishServiceOrderAsync(int id)
+        {
+            ServiceOrder serviceOrder = await _serviceOrderRepository.GetByIdAsync(id);
+
+            if (serviceOrder is null)
+            {
+                throw new NotFoundException("Service Order not found");
+            }
+
+            serviceOrder.FinishOS();
+            await _serviceOrderRepository.FinishAsync(serviceOrder);
+        }
+
+        public async Task CancelServiceOrderAsync(int id)
+        {
+            ServiceOrder serviceOrder = await _serviceOrderRepository.GetByIdAsync(id);
+
+            if (serviceOrder is null)
+            {
+                throw new NotFoundException("Service Order not found");
+            }
+
+            serviceOrder.Cancel();
+            await _serviceOrderRepository.CancelAsync(serviceOrder);
         }
     }
 }

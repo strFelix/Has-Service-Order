@@ -16,13 +16,11 @@ namespace OsDsII.api.Controllers
     public sealed class ServiceOrdersController : ControllerBase
     {
         private readonly IServiceOrderService _serviceOrderService;
-        private readonly ICustomersService _customersService;
         private readonly IMapper _mapper;
 
-        public ServiceOrdersController(ICustomersService customersService, IServiceOrderService serviceOrderService,IMapper mapper)
+        public ServiceOrdersController(IServiceOrderService serviceOrderService,IMapper mapper)
         {
             _serviceOrderService = serviceOrderService;
-            _customersService = customersService;
             _mapper = mapper;
         }
 
@@ -59,12 +57,7 @@ namespace OsDsII.api.Controllers
         {
             try
             {
-                //new service (service order puro)
-                ServiceOrder serviceOrder = _serviceOrderService.CreateServiceOrderAsync(serviceOrderDto);
-
-                CustomerDto customer = await _customersService.GetCustomerAsync(serviceOrderDto.CustomerId);
-
-                
+                NewServiceOrderDto serviceOrder = await _serviceOrderService.CreateServiceOrderAsync(serviceOrderDto);
                 return Created("CreateServiceOrderAsync", serviceOrder);
             }
             catch (Exception ex)
@@ -79,16 +72,8 @@ namespace OsDsII.api.Controllers
         {
             try
             {
-                ServiceOrder serviceOrder = await _serviceOrderRepository.GetByIdAsync(id);
-                if (serviceOrder is null)
-                {
-                    throw new Exception("Service order cannot be null");
-                }
-
-                serviceOrder.FinishOS();
-                await _serviceOrderRepository.FinishAsync(serviceOrder);
+                await _serviceOrderService.FinishServiceOrderAsync(id);
                 return NoContent();
-
             }
             catch (Exception ex)
             {
@@ -101,16 +86,8 @@ namespace OsDsII.api.Controllers
         {
             try
             {
-                ServiceOrder serviceOrder = await _serviceOrderRepository.GetByIdAsync(id);
-                if (serviceOrder is null)
-                {
-                    throw new Exception("Service order cannot be null");
-                }
-
-                serviceOrder.Cancel();
-                await _serviceOrderRepository.CancelAsync(serviceOrder);
-
-                return NoContent();
+               await _serviceOrderService.CancelServiceOrderAsync(id);
+               return NoContent();
             }
             catch (Exception ex)
             {

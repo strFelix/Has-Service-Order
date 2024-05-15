@@ -6,7 +6,8 @@ namespace OsDsII.api.Services.ServiceOrders
     {
         public Task<List<ServiceOrderDto>> GetAllAsync();
         public Task<ServiceOrderDto> GetServiceOrderAsync(int id);
-        public Task<CreateServiceOrderDto> CreateServiceOrderAsync(CreateServiceOrderDto createServiceOrderDto);
-        
+        public Task<NewServiceOrderDto> CreateServiceOrderAsync(CreateServiceOrderDto createServiceOrderDto);
+        public Task FinishServiceOrderAsync(int id);
+        public Task CancelServiceOrderAsync(int id);
     }
 }
