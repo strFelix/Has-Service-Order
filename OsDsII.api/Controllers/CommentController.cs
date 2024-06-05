@@ -1,66 +1,80 @@
-using Microsoft.AspNetCore.Mvc;
-using OsDsII.api.Models;
-using OsDsII.api.Repository.CommentsRepository;
-using OsDsII.api.Repository.ServiceOrderRepository;
+//using Microsoft.AspNetCore.Mvc;
+//using OsDsII.api.Dtos.ServiceOrders;
+//using OsDsII.api.Exceptions;
+//using OsDsII.api.Models;
+//using OsDsII.api.Repository.CommentsRepository;
+//using OsDsII.api.Repository.ServiceOrderRepository;
+//using OsDsII.api.Services.Comments;
+//using OsDsII.api.Services.ServiceOrders;
 
-namespace OsDsII.api.Controllers
-{
+//namespace OsDsII.api.Controllers
+//{
 
-    [ApiController]
-    [Route("ServiceOrders/{id}/comment")]
-    public class CommentController : ControllerBase
-    {
-        //private readonly DataContext _context;
-        private readonly IServiceOrderRepository _serviceOrderRepository; // IOC (INVERSION OF CONTROL)
-        private readonly ICommentsRepository _commentsRepository;
+//    [ApiController]
+//    [Route("ServiceOrders/{id}/comment")]
+//    public class CommentController : ControllerBase
+//    {
 
+//        private ICommentsService _commentsService;
+//        private IServiceOrderService _serviceOrderService;
 
-        public CommentController(IServiceOrderRepository serviceOrderRepository, ICommentsRepository commentsRepository)
-        {
-            _serviceOrderRepository = serviceOrderRepository;
-            _commentsRepository = commentsRepository;
-        }
+//        public CommentController(ICommentsService commentsService)
+//        {
+//            _commentsService = commentsService;
+//        }
 
-        [HttpGet]
-        public async Task<IActionResult> GetCommentsAsync(int serviceOrderId)
-        {
-            ServiceOrder serviceOrderWithComments = await _serviceOrderRepository.GetServiceOrderWithComments(serviceOrderId);
-            return Ok(serviceOrderWithComments);
+//        [HttpGet]
+//        [ProducesResponseType(StatusCodes.Status200OK)]
+//        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+//        public async Task<IActionResult> GetCommentsAsync(int serviceOrderId)
+//        {
+//            try
+//            {
+//                ServiceOrderDto serviceOrderWithComments = await _commentsService.GetServiceOrderWithComments(serviceOrderId);
+//                return Ok(serviceOrderWithComments);
+//            }
+//            catch (BaseException ex)
+//            {
+//                return ex.GetResponse();
+//            }
+//        }
 
-        }
+//        [HttpPost]
+//        public async Task<IActionResult> AddComment(Comment comment, int serviceOrderId)
+//        {
+//            try
+//            {
+//                // no proprio _serviceOrderService
+//                ServiceOrder os = await _serviceOrderRepository.GetServiceOrderFromUser(serviceOrderId);
 
-        [HttpPost]
-        public async Task<IActionResult> AddComment(int serviceOrderId, Comment comment)
-        {
-            try
-            {
-                ServiceOrder os = await _serviceOrderRepository.GetServiceOrderFromUser(serviceOrderId);
+//                if (os == null)
+//                {
+//                    throw new Exception("Service Order not found.");
+//                }
 
-                if (os == null)
-                {
-                    throw new Exception("Service Order not found.");
-                }
+//                // serviço de comentários
+//                // no método, você retorna ESSE \/ AQUI
+//                Comment commentExists = HandleCommentObject(serviceOrderId, comment.Description);
 
-                Comment commentExists = HandleCommentObject(serviceOrderId, comment.Description);
+//                await _commentsRepository.AddCommentAsync(commentExists); // This line adds the comment to the context
 
-                await _commentsRepository.AddCommentAsync(commentExists); // This line adds the comment to the context
+//                return Ok(commentExists);
+//            }
+//            catch (BaseException ex)
+//            {
+//                return ex.GetResponse();
+//            }
+//        }
 
-                return Ok(commentExists);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
-
-        private Comment HandleCommentObject(int id, string description)
-        {
-            return new Comment
-            {
-                Description = description,
-                ServiceOrderId = id
-            };
-        }
-    }
-}
+//        // vai pro services de comentário
+//        private Comment HandleCommentObject(int id, string description)
+//        {
+//            return new Comment
+//            {
+//                Description = description,
+//                ServiceOrderId = id
+//            };
+//        }
+//    }
+//}
 
