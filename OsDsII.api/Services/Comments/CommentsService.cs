@@ -1,5 +1,10 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.EntityFrameworkCore;
+using OsDsII.api.Data;
+using OsDsII.api.Dtos;
 using OsDsII.api.Dtos.ServiceOrders;
+using OsDsII.api.Exceptions;
 using OsDsII.api.Models;
 using OsDsII.api.Repository.CommentsRepository;
 using OsDsII.api.Repository.ServiceOrderRepository;
@@ -19,11 +24,29 @@ namespace OsDsII.api.Services.Comments
             _mapper = mapper;
         }
 
-        public async Task<ServiceOrderDto> GetServiceOrderWithComments(int serviceOrderId)
+        public async Task<Comment> AddCommentAsync(int serviceOrderId, CommentDto comment)
         {
-            ServiceOrder serviceOrderWithComments = await _serviceOrderRepository.GetServiceOrderWithComments(serviceOrderId);
-            var serviceOrder = _mapper.Map<ServiceOrderDto>(serviceOrderWithComments);
-            return serviceOrder;
+
+            var commentMapped = _mapper.Map<Comment>(comment);
+            var os = await _serviceOrderRepository.GetByIdAsync(serviceOrderId);
+
+            if (os == null)
+            {
+                throw new NotFoundException("ServiceOrder not found.");
+            }
+
+            Comment commentExists = HandleCommentObject(os.Id, commentMapped.Description);
+
+            return commentExists;
+        }
+
+        private Comment HandleCommentObject(int id, string description)
+        {
+            return new Comment
+            {
+                Description = description,
+                ServiceOrderId = id
+            };
         }
     }
 }

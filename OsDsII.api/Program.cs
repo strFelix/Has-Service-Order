@@ -3,7 +3,9 @@ using OsDsII.api.Data;
 using OsDsII.api.Repository.CommentsRepository;
 using OsDsII.api.Repository.CustomersRepository;
 using OsDsII.api.Repository.ServiceOrderRepository;
+using OsDsII.api.Services.Comments;
 using OsDsII.api.Services.Customers;
+using OsDsII.api.Services.ServiceOrders;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Logging.ClearProviders();
@@ -21,10 +23,11 @@ builder.Services.AddCors();
 builder.Services.AddScoped<IServiceOrderRepository, ServiceOrderRepository>();
 builder.Services.AddScoped<ICustomersRepository, CustomersRepository>();
 builder.Services.AddScoped<ICommentsRepository, CommentsRepository>();
-
+builder.Services.AddScoped<IServiceOrderService, ServiceOrderService>();
 builder.Services.AddScoped<ICustomersService, CustomersService>();
+builder.Services.AddScoped<ICommentsService, CommentsService>();
 
-builder.Services.AddAutoMapper(typeof(Program));
+
 builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

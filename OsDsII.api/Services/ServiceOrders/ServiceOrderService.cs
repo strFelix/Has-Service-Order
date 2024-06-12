@@ -38,6 +38,25 @@ namespace OsDsII.api.Services.ServiceOrders
             return serviceOrderDto;
         }
 
+        public async Task<ServiceOrderDto> GetServiceOrderFromUserAsync(int serviceOrderId)
+        {
+            ServiceOrder os = await _serviceOrderRepository.GetServiceOrderFromUser(serviceOrderId);
+
+            if (os == null)
+            {
+                throw new Exception("Service Order not found.");
+            }
+            var serviceOrderDto = _mapper.Map<ServiceOrderDto>(os);
+            return serviceOrderDto;
+        }
+
+        public async Task<ServiceOrderDto> GetServiceOrderWithComments(int serviceOrderId)
+        {
+            ServiceOrder serviceOrderWithComments = await _serviceOrderRepository.GetServiceOrderWithComments(serviceOrderId);
+            var serviceOrder = _mapper.Map<ServiceOrderDto>(serviceOrderWithComments);
+            return serviceOrder;
+        }
+
         public async Task<NewServiceOrderDto> CreateServiceOrderAsync(CreateServiceOrderDto createServiceOrderDto)
         {
             if (createServiceOrderDto is null)
